@@ -11,6 +11,17 @@
     </div>
     
     <div v-else>
+      <!-- Filtre par ville -->
+      <div class="mb-4 flex gap-2 items-center">
+        <label class="font-semibold text-gray-700">Filtrer par ville :</label>
+        <select v-model="villeFiltre" class="border rounded px-3 py-1">
+          <option value="">Toutes</option>
+          <option v-for="ville in villesUniques" :key="ville" :value="ville">
+            {{ ville }}
+          </option>
+        </select>
+      </div>
+      
       <!-- KPIs -->
       <StatsCard v-if="stats" :stats="stats" />
       
@@ -20,7 +31,7 @@
       </div>
       
       <!-- Tableau -->
-      <DataTable v-if="data" :columns="data.columns" :rows="data.rows" />
+      <DataTable v-if="data" :columns="data.columns" :rows="filteredRows" />
     </div>
   </div>
 </template>
@@ -37,6 +48,18 @@ const data = ref<ApiData | null>(null);
 const stats = ref<Stats | null>(null);
 const loading = ref(true);
 const error = ref('');
+const villeFiltre = ref('');
+
+const villesUniques = computed(() => {
+  if (!data.value) return [];
+  const villes = data.value.rows.map(row => row[3]);
+  return [...new Set(villes)];
+});
+
+const filteredRows = computed(() => {
+  if (!villeFiltre.value || !data.value) return data.value?.rows || [];
+  return data.value.rows.filter(row => row[3] === villeFiltre.value);
+});
 
 const chartData = computed<Property[]>(() => {
   if (!data.value) return [];

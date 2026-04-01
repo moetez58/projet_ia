@@ -18,12 +18,12 @@ def root():
 
 @app.get("/data")
 def get_data():
-    """Renvoie les données du CSV"""
+    """Lit le CSV et retourne les données avec ville et quartier"""
     df = pd.read_csv("data.csv")
     return {
-        "columns": df.columns.tolist(),
-        "rows": df.values.tolist(),
-        "count": len(df)
+        "columns": df.columns.tolist(),  # ["surface", "chambres", "prix", "ville", "quartier"]
+        "rows": df.values.tolist(),      # Toutes les lignes avec ville/quartier
+        "count": len(df)                 # 15
     }
 
 @app.get("/stats")
